@@ -7,7 +7,8 @@ import {
   RegisterData,
   IOtpResponse,
   Otp,
-  ICategory,
+  IUpdatePasswordResponse,
+  UpdatePassword,
 } from "@/typeScript/auth.interface";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
@@ -44,7 +45,6 @@ export const login = createAsyncThunk<
 });
 // .................................Login end..........................//
 
-
 // managing the action state of otp with axios and endpoints//
 export const otp = createAsyncThunk<
   IOtpResponse,
@@ -60,6 +60,21 @@ export const otp = createAsyncThunk<
 });
 
 //....................OTP END.......................//
+
+export const updatepassword = createAsyncThunk<
+  IUpdatePasswordResponse,
+  UpdatePassword,
+  { rejectValue: { status: false; message: string } }
+>("updatepassword", async (formData: UpdatePassword) => {
+  let res = await axiosInstance.put<IUpdatePasswordResponse>(
+    endPoints.auth.updatePassword,
+    formData
+  );
+  let resData = res?.data;
+  return resData;
+});
+
+//................Update Password end.............//
 export const authSlice = createSlice({
   name: "Authentication",
   initialState,
@@ -83,7 +98,13 @@ export const authSlice = createSlice({
       })
 
       .addCase(login.pending, (state, { payload }) => {})
-      .addCase(login.fulfilled, (state, { payload }) => {})
+      .addCase(login.fulfilled, (state, { payload }) => {
+        if (payload.status === true) {
+          toast.success(payload.message);
+        }else {
+          toast.error("Email and Password Mismatched");
+        }
+      })
       .addCase(login.rejected, (state, { payload }) => {})
 
       .addCase(otp.pending, (state, { payload }) => {})
@@ -100,6 +121,14 @@ export const authSlice = createSlice({
 
         state.error = errorMessage;
         toast.error(errorMessage);
+      })
+      .addCase(updatepassword.pending, (state, { payload }) => {})
+      .addCase(updatepassword.fulfilled, (state, { payload }) => {
+        if (payload.status === true) {
+          toast.success(payload.message);
+        } else {
+          toast.error(payload.message);
+        }
       });
   },
 });

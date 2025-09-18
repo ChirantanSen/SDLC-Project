@@ -49,7 +49,9 @@ export interface ILoginResponse extends loginPayload {
   data: loginPayload;
 }
 
-//....Verify email.....//
+
+
+//....Verify email via OTP.....//
 //.....send data from  Verify email.....//
 
 export interface Otp {
@@ -67,5 +69,18 @@ export interface IOtpResponse extends OtpPayload {
 }
 //..............................//
 
-//................categoryList.....//
+//................Upadate Password.....//
 
+export interface UpdatePassword{
+    currentPassword:string;
+    newPassword:string;
+    confirmPassword:string;
+}
+
+interface UpadatePasswordPayLoad{
+    status: Boolean;
+    message: string;
+}
+export interface IUpdatePasswordResponse extends UpadatePasswordPayLoad{
+  data:UpadatePasswordPayLoad;
+}

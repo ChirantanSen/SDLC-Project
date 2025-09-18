@@ -14,7 +14,7 @@ import { Provider } from "react-redux";
 import { store } from "@/redux/store/store";
 import NewsletterSection from "@/component/newsletter/newsletter";
 import OurServices from "./cms/ourServices/ourServices";
-import toast, { Toaster } from 'react-hot-toast';
+import  { Toaster } from 'react-hot-toast';
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
