@@ -1,12 +1,15 @@
 import Footer from "../footer/footer";
 import Header from "../header/header";
 
-const Wrapper: React.FC<Props> = ({ children }) => {
+interface MyComponentProps {
+  children: Function;
+}
+const Wrapper: React.FC<MyComponentProps> = ({ children }) => {
   return (
     <>
-      <Header/>
+      <Header />
       {children}
-      <Footer/>
+      <Footer />
     </>
   );
 };

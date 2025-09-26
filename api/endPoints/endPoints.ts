@@ -19,7 +19,7 @@ export const endPoints = {
   // }
   cms: {
     categoryList: "/category/list",
-    createList: "/category/create",
+    categoryCreate: "/category/create",
     LandingPage: "/landingPage/landingpage",
   },
 };

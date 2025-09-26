@@ -11,40 +11,45 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useDispatch } from "react-redux";
+
 import { registerForm } from "@/redux/authSlice/authSlice";
+import { useAppDispatch } from "@/typeScript/hooks.type";
+import {
+  RegisterFormValues,
+  RegisterPayload,
+} from "@/typeScript/auth.interface";
 
 // ✅ Validation Schema
-const schema = yup.object().shape({
-  name: yup
-    .string()
-    .min(2, "Minimum 2 letters required")
-    .required("Name is required"),
+export const schema = yup.object().shape({
+  role: yup.string().required("Role is required"),
+  name: yup.string().required("Name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup
     .string()
-    .min(4, "Minimum 4 characters required")
+    .min(6, "Password must be at least 6 characters")
     .required("Password is required"),
-  role: yup
-    .string()
-    .min(2, "Minimum 2 letters required")
-    .required("Role is required"),
-  skills: yup
-    .string()
-    .min(2, "Minimum 2 letters required")
-    .required("Skills are required"),
-  bio: yup
-    .string()
-    .min(2, "Minimum 2 letters required")
-    .required("Bio is required"),
-  profilePic: yup.mixed().required("Profile Picture is required"),
+  skills: yup.string().required("Skills are required"),
+  bio: yup.string().required("Bio is required"),
+  profilePic: yup
+    .mixed<File>()
+    .test(
+      "fileSize",
+      "File is too large",
+      (value) => !value || (value && value.size <= 2_000_000)
+    ) // 2MB max
+    .test(
+      "fileType",
+      "Unsupported File Format",
+      (value) =>
+        !value || (value && ["image/jpeg", "image/png"].includes(value.type))
+    ),
 });
 
 export default function Register() {
   const [img, setImg] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
   const {
@@ -53,7 +58,9 @@ export default function Register() {
     setValue,
     clearErrors,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) });
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   // 🔹 Handle Image Selection
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +76,7 @@ export default function Register() {
   };
 
   // 🔹 Form Submit Handler
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: RegisterPayload) => {
     setLoading(true);
     const formData = new FormData();
     formData.append("name", data.name);
@@ -84,7 +91,7 @@ export default function Register() {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      const response = await dispatch(registerForm(formData));
+      const response = await dispatch(registerForm(formData)).unwrap();
       console.log(response, "response");
 
       if (response?.payload?.status) {
@@ -311,6 +318,3 @@ export default function Register() {
     </Box>
   );
 }
-
-
-

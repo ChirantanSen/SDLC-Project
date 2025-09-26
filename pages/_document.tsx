@@ -14,6 +14,7 @@
 
 
 // pages/_document.tsx
+// import ChatBot from "@/component/chatBot/chat";
 import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
@@ -31,6 +32,7 @@ export default function Document() {
       </Head>
       <body>
         <Main />
+        {/* <ChatBot/> */}
         <NextScript />
       </body>
     </Html>

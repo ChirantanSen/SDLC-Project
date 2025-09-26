@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -13,17 +15,21 @@ import {
   Container,
 } from "@mui/material";
 import { Google, Facebook, Instagram, Email } from "@mui/icons-material";
-import VerifiedSuccess from "@/component/otpVerified/otpVerified";
 
-
-// Redux & Router
-import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { login } from "@/redux/authSlice/authSlice";
+import { Cookies } from "react-cookie";
+import toast from "react-hot-toast";
+
+import { useAppDispatch } from "@/typeScript/hooks.type";
+import { LoginPayload } from "@/typeScript/auth.interface";
 
 // ✅ Validation schema
 const schema = yup.object().shape({
-  email: yup.string().email("Invalid email format").required("Email is required"),
+  email: yup
+    .string()
+    .email("Invalid email format")
+    .required("Email is required"),
   password: yup
     .string()
     .min(4, "Minimum 4 characters required")
@@ -31,9 +37,9 @@ const schema = yup.object().shape({
 });
 
 function Login() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
-
+  const cookies = new Cookies();
   const [loading, setLoading] = React.useState(false);
 
   const {
@@ -44,8 +50,16 @@ function Login() {
     resolver: yupResolver(schema),
   });
 
+  // ✅ Show toast if redirected without token
+  useEffect(() => {
+    const token = cookies.get("token");
+    if (!token) {
+      toast.error("Please login first");
+    }
+  }, []);
+
   // ✅ Handle form submit
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: LoginPayload) => {
     setLoading(true);
 
     const formData = {
@@ -55,15 +69,14 @@ function Login() {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500)); // simulate delay
-      const response = await dispatch(login(formData));
+      const response = await dispatch(login(formData)).unwrap();
 
       console.log(response, "response");
 
-      if (response?.payload?.status) {
+      if (response?.status === true) {
         router.push("/cms/landingPage/landingPage");
       }
     } catch (error) {
-      console.error(error, "Login error");
     } finally {
       setLoading(false);
     }
@@ -152,8 +165,23 @@ function Login() {
             >
               <Box
                 component="img"
-                src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d"
-                alt="Office Workspace"
+                // src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d"
+                // alt="Office Workspace"
+
+                // src="https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80"
+                // alt="Team Collaboration"
+
+                src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=800&q=80"
+                alt="Creative Office Space"
+                // src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=800&q=80"
+                // alt="Team Working Together"
+
+                // src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80"
+                // alt="Open Plan Office"
+
+                // src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80"
+                // alt="Team Meeting"
+
                 sx={{
                   width: "100%",
                   height: "100%",
@@ -225,10 +253,18 @@ function Login() {
                 <Divider sx={{ my: 3 }}>or continue with</Divider>
 
                 <Box display="flex" justifyContent="center" gap={2} mb={2}>
-                  <IconButton><Google /></IconButton>
-                  <IconButton><Facebook /></IconButton>
-                  <IconButton><Instagram /></IconButton>
-                  <IconButton><Email /></IconButton>
+                  <IconButton>
+                    <Google />
+                  </IconButton>
+                  <IconButton>
+                    <Facebook />
+                  </IconButton>
+                  <IconButton>
+                    <Instagram />
+                  </IconButton>
+                  <IconButton>
+                    <Email />
+                  </IconButton>
                 </Box>
 
                 <Box textAlign="center">
@@ -244,9 +280,6 @@ function Login() {
           </Box>
         </Container>
       </Box>
-
-
-     
     </>
   );
 }

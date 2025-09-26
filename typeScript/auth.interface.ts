@@ -1,43 +1,56 @@
 //......Register Start......//
+
+import { BlobOptions } from "buffer";
+
 //send data from Register //
-export interface RegisterData {
-  id: string;
-  name: string;
+export interface RegisterPayload {
+  role: string;
   email: string;
   password: string;
-  role: string;
-  skills: string[];
+  name: string;
+  skills: string;
   bio: string;
-  imagePath: File;
+  profilePic: File | null;
 }
-// received data//
-interface registerPayload {
-  status: boolean;
+
+// Backend response
+export interface registerResponse {
   message: string;
-  data: {
-    id: string;
+  payload: {
+    status: boolean;
+    _id: string;
     name: string;
     email: string;
     password: string;
-    isVerfied: boolean;
+    isVerified: boolean;
   };
 }
 
-export interface IResgisterResponse extends registerPayload {
-  data: registerPayload;
+// Form values from react-hook-form
+export interface RegisterFormValues {
+  role: string;
+  email: string;
+  password: string;
+  name: string;
+  skills: string;
+  bio: string;
+  profilePic: File | null;
+}
+
+export interface IResgisterResponse extends registerResponse {
+  data: registerResponse;
 }
 
 //..........Login Start.......//
 //..........send data from login ..................//
 
-export interface LoginData {
-  id: string;
+export interface LoginPayload {
   email: string;
   password: string;
 }
-interface loginPayload {
-  status: Boolean;
+interface loginResponse {
   message: string;
+  status: boolean;
   user: {
     _id: string;
     email: string;
@@ -45,42 +58,48 @@ interface loginPayload {
   token: string;
 }
 
-export interface ILoginResponse extends loginPayload {
-  data: loginPayload;
+export interface ILoginResponse extends loginResponse {
+  data: loginResponse;
 }
-
-
 
 //....Verify email via OTP.....//
 //.....send data from  Verify email.....//
 
-export interface Otp {
-  id: string;
+// Request type
+export interface OtpPayload {
   email: string;
   otp: string;
 }
 
-interface OtpPayload {
-  status: Boolean;
+// Response type
+export interface OtpResponse {
+  status: boolean;
   message: string;
+  data: any;
+  user: any;
 }
-export interface IOtpResponse extends OtpPayload {
-  data: OtpPayload;
+
+export interface OtpForm {
+  otp1: string;
+  otp2: string;
+  otp3: string;
+  otp4: string;
 }
+
 //..............................//
 
 //................Upadate Password.....//
 
-export interface UpdatePassword{
-    currentPassword:string;
-    newPassword:string;
-    confirmPassword:string;
+export interface UpdatePassword {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
-interface UpadatePasswordPayLoad{
-    status: Boolean;
-    message: string;
+interface UpadatePasswordPayLoad {
+  status: Boolean;
+  message: string;
 }
-export interface IUpdatePasswordResponse extends UpadatePasswordPayLoad{
-  data:UpadatePasswordPayLoad;
+export interface IUpdatePasswordResponse extends UpadatePasswordPayLoad {
+  data: UpadatePasswordPayLoad;
 }

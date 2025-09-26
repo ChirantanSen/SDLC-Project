@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 export default function Home() {
   const captions = [
-    "Perfect IT Solutions for Your Business",
+    "Perfect IT Solutions for Your Business'",
     "Join a Thriving Freelancer Community",
     "Innovative Tech for Modern Companies",
     "Scaling Your Business with Experts",
